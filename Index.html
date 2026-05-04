@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sam Music — Análise 2025</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+:root {
+  --ink: #0f0f0f;
+  --ink-mid: #3a3a3a;
+  --ink-soft: #777;
+  --paper: #f5f2ec;
+  --paper-dark: #e8e4db;
+  --gold: #b8952a;
+  --gold-light: #f0d98a;
+  --green: #1a5c3a;
+  --green-mid: #2e7d52;
+  --green-light: #d4edd9;
+  --red: #8b2020;
+  --blue: #1a3a5c;
+  --accent: #c8a84b;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  overflow-x: hidden;
+}
+
+/* NAV */
+nav {
+  position: fixed; top:0; left:0; right:0; z-index:100;
+  background: var(--ink);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 2.5rem;
+  height: 56px;
+  border-bottom: 2px solid var(--gold);
+}
+nav .logo {
+  font-family: 'Playfair Display', serif;
+  color: var(--gold);
+  font-size: 1.1rem;
+  letter-spacing: 0.05em;
+  font-weight: 700;
+}
+nav ul { list-style:none; display:flex; gap:0.25rem; }
+nav ul li a {
+  color: #aaa;
+  text-decoration: none;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.4rem 0.8rem;
+  border-radius: 3px;
+  transition: all 0.2s;
+}
+nav ul li a:hover, nav ul li a.active { color:#fff; background: rgba(255,255,255,0.08); }
+
+/* SECTIONS */
+section { min-height: 100vh; padding: 90px 0 60px; }
+.container { max-width: 1100px; margin: 0 auto; padding: 0 2rem; }
+
+/* HERO */
+#hero {
+  background: var(--ink);
+  display: flex; align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+#hero::before {
+  content:'';
+  position:absolute; inset:0;
+  background: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 40px,
+    rgba(184,149,42,0.04) 40px,
+    rgba(184,149,42,0.04) 41px
+  );
+}
+.hero-inner {
+  position:relative; z-index:1;
+  max-width:1100px; margin:0 auto; padding: 0 2rem;
+  width:100%;
+}
+.hero-label {
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 1.5rem;
+}
+.hero-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(3.5rem, 8vw, 7rem);
+  font-weight: 900;
+  color: #fff;
+  line-height: 0.95;
+  margin-bottom: 2.5rem;
+}
+.hero-title em { color: var(--gold); font-style: normal; }
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.1);
+  margin-top: 3rem;
+}
+.kpi-card {
+  background: rgba(255,255,255,0.04);
+  padding: 1.8rem 1.5rem;
+  transition: background 0.2s;
+}
+.kpi-card:hover { background: rgba(255,255,255,0.07); }
+.kpi-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #888;
+  margin-bottom: 0.6rem;
+}
+.kpi-value {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1;
+}
+.kpi-value.gold { color: var(--gold); }
+.kpi-sub {
+  font-size: 0.75rem;
+  color: #666;
+  margin-top: 0.4rem;
+}
+
+/* SECTION TITLES */
+.section-label {
+  font-size: 0.68rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 0.75rem;
+}
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 700;
+  line-height: 1.1;
+  margin-bottom: 2.5rem;
+  color: var(--ink);
+}
+.section-title span {
+  border-bottom: 3px solid var(--gold);
+  padding-bottom: 2px;
+}
+
+/* CHART SECTIONS */
+#mensal { background: var(--paper); }
+.chart-wrap { position:relative; width:100%; }
+
+/* MES TABLE */
+.mes-grid {
+  display: grid;
+  grid-template-columns: repeat(12,1fr);
+  gap:4px;
+  margin-bottom: 2rem;
+}
+.mes-block {
+  background: var(--paper-dark);
+  border-radius: 4px;
+  padding: 0.6rem 0.4rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 2px solid transparent;
+}
+.mes-block:hover, .mes-block.active {
+  background: var(--green);
+  border-color: var(--gold);
+}
+.mes-block:hover *, .mes-block.active * { color:#fff !important; }
+.mes-block .mb-label { font-size:0.65rem; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-soft); }
+.mes-block .mb-n { font-family:'Playfair Display',serif; font-size:1.4rem; font-weight:700; color:var(--ink); }
+.mes-block .mb-v { font-size:0.62rem; color:var(--ink-soft); margin-top:2px; }
+
+.bar-section { margin-bottom: 3rem; }
+.bar-label-row {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom: 0.5rem;
+}
+.bar-name { font-size:0.8rem; font-weight:500; }
+.bar-val { font-size:0.75rem; color:var(--ink-soft); }
+.bar-track { background: var(--paper-dark); border-radius:3px; height:10px; overflow:hidden; }
+.bar-fill {
+  height:100%; border-radius:3px;
+  transition: width 1s cubic-bezier(.4,0,.2,1);
+}
+.bar-fill.cache { background: var(--green); }
+.bar-fill.sam   { background: var(--gold); }
+
+/* TIPO */
+#tipo { background: var(--ink); }
+#tipo .section-title { color: #fff; }
+#tipo .section-label { color: var(--gold); }
+
+.tipo-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+.tipo-card {
+  padding: 1.8rem 1.5rem;
+  background: rgba(255,255,255,0.03);
+  border-top: 3px solid transparent;
+  transition: background 0.2s;
+}
+.tipo-card:hover { background: rgba(255,255,255,0.06); }
+.tc-tipo { font-size:0.65rem; letter-spacing:.14em; text-transform:uppercase; margin-bottom:0.5rem; }
+.tc-n { font-family:'Playfair Display',serif; font-size:2.5rem; font-weight:900; color:#fff; line-height:1; }
+.tc-shows { font-size:0.72rem; color:#666; margin-bottom:1rem; }
+.tc-row { display:flex; justify-content:space-between; border-top:1px solid rgba(255,255,255,0.07); padding-top:0.75rem; margin-top:0.75rem; }
+.tc-row-item { }
+.tc-row-label { font-size:0.6rem; text-transform:uppercase; letter-spacing:.1em; color:#666; }
+.tc-row-val { font-size:0.9rem; font-weight:500; color:#ddd; }
+.margem-bar { height:3px; background:rgba(255,255,255,0.1); border-radius:2px; margin-top:1rem; overflow:hidden; }
+.margem-fill { height:100%; border-radius:2px; background: var(--gold); }
+
+/* GEOGRAFICO */
+#geo { background: var(--paper); }
+.geo-grid { display:grid; grid-template-columns: 1fr 1fr; gap:2rem; }
+
+.ranking-list { }
+.ranking-item {
+  display: grid;
+  grid-template-columns: 2rem 1fr auto;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.85rem 0;
+  border-bottom: 1px solid var(--paper-dark);
+}
+.ranking-item:last-child { border-bottom:none; }
+.rank-n {
+  font-family:'Playfair Display',serif;
+  font-size:1.1rem; font-weight:700;
+  color: var(--paper-dark);
+  text-align:center;
+}
+.rank-n.top { color: var(--gold); }
+.rank-name { font-size:0.85rem; font-weight:500; }
+.rank-sub { font-size:0.7rem; color:var(--ink-soft); }
+.rank-val { font-size:0.8rem; font-weight:500; text-align:right; }
+.rank-shows { font-size:0.68rem; color:var(--ink-soft); }
+
+.uf-chart-wrap { position:relative; height:320px; }
+
+/* SHOWS TABLE */
+#shows { background: var(--paper-dark); }
+.shows-filters {
+  display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:1.5rem;
+}
+.filter-btn {
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  border: 1.5px solid var(--paper-dark);
+  background: #fff;
+  font-family:'DM Sans',sans-serif;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.15s;
+  color: var(--ink-mid);
+}
+.filter-btn:hover { border-color:var(--green); }
+.filter-btn.active { background:var(--green); color:#fff; border-color:var(--green); }
+
+.shows-table { width:100%; border-collapse:collapse; }
+.shows-table th {
+  text-align:left; font-size:0.65rem; text-transform:uppercase;
+  letter-spacing:.1em; color:var(--ink-soft);
+  padding: 0.6rem 0.75rem;
+  border-bottom: 2px solid var(--ink);
+  position:sticky; top:56px; background:var(--paper-dark);
+}
+.shows-table td {
+  padding: 0.7rem 0.75rem;
+  font-size:0.8rem;
+  border-bottom: 1px solid var(--paper);
+  vertical-align:middle;
+}
+.shows-table tr:hover td { background: rgba(255,255,255,0.5); }
+.tipo-badge {
+  display:inline-block;
+  padding: 0.2rem 0.55rem;
+  border-radius: 10px;
+  font-size:0.65rem;
+  letter-spacing:.06em;
+  font-weight:500;
+}
+.badge-Corporativo { background:#d6eaf8; color:#1a3a5c; }
+.badge-Aniversário { background:#e8daef; color:#4a235a; }
+.badge-Prefeitura  { background:#d5f5e3; color:#1a4a2e; }
+.badge-Festival    { background:#fde8d8; color:#6e2c0f; }
+.badge-SESC        { background:#d1f2eb; color:#0e4a3a; }
+.badge-Show-Próprio { background:#f2f3f4; color:#444; }
+.badge-AçãoLocução { background:#fef9e7; color:#7d6608; }
+.td-cache { font-weight:500; color:var(--green); }
+.td-sam   { color:var(--ink-mid); }
+.hidden-row { display:none; }
+
+/* FOOTER */
+footer {
+  background: var(--ink);
+  color:#555;
+  text-align:center;
+  padding: 2rem;
+  font-size:0.75rem;
+  border-top: 2px solid var(--gold);
+}
+footer strong { color: var(--gold); }
+
+/* Responsive tweaks */
+@media(max-width:768px){
+  .kpi-grid { grid-template-columns:repeat(2,1fr); }
+  .tipo-cards { grid-template-columns:1fr; }
+  .geo-grid { grid-template-columns:1fr; }
+  nav ul { display:none; }
+  .mes-grid { grid-template-columns:repeat(6,1fr); }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Sam Music · 2025</div>
+  <ul>
+    <li><a href="#hero">Visão Geral</a></li>
+    <li><a href="#mensal">Mensal</a></li>
+    <li><a href="#tipo">Por Tipo</a></li>
+    <li><a href="#geo">Geográfico</a></li>
+    <li><a href="#shows">Todos os Shows</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-inner">
+    <p class="hero-label">Relatório de Fechamentos — Samuel Rosa</p>
+    <h1 class="hero-title">Ano<br><em>2025</em></h1>
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">Total de Shows</div>
+        <div class="kpi-value gold">78</div>
+        <div class="kpi-sub">12 meses · 13 estados</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Cachê Bruto Total</div>
+        <div class="kpi-value">R$ 15,4M</div>
+        <div class="kpi-sub">Média R$ 198k / show</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Líquido Sam Music</div>
+        <div class="kpi-value">R$ 7,4M</div>
+        <div class="kpi-sub">Margem média 48,3%</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Mês Pico</div>
+        <div class="kpi-value gold">Dez</div>
+        <div class="kpi-sub">R$ 2,2M cachê · 10 shows</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MENSAL -->
+<section id="mensal">
+  <div class="container">
+    <p class="section-label">Evolução ao longo do ano</p>
+    <h2 class="section-title"><span>Análise Mensal</span></h2>
+
+    <div class="mes-grid" id="mesGrid"></div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:3rem;margin-top:2rem;">
+      <div>
+        <p style="font-size:.75rem;font-weight:500;margin-bottom:1rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);">Cachê Bruto (R$)</p>
+        <div id="barsCachê"></div>
+      </div>
+      <div>
+        <p style="font-size:.75rem;font-weight:500;margin-bottom:1rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);">Líquido Sam Music (R$)</p>
+        <div id="barsSam"></div>
+      </div>
+    </div>
+
+    <div style="margin-top:3rem;position:relative;height:280px;">
+      <canvas id="lineChart" role="img" aria-label="Evolução mensal de shows e cachê 2025"></canvas>
+    </div>
+  </div>
+</section>
+
+<!-- TIPO -->
+<section id="tipo">
+  <div class="container">
+    <p class="section-label">Segmentação por categoria</p>
+    <h2 class="section-title"><span>Por Tipo de Show</span></h2>
+    <div class="tipo-cards" id="tipoCards"></div>
+    <div style="margin-top:2rem;position:relative;height:280px;">
+      <canvas id="tipoChart" role="img" aria-label="Comparativo financeiro por tipo de show"></canvas>
+    </div>
+  </div>
+</section>
+
+<!-- GEO -->
+<section id="geo">
+  <div class="container">
+    <p class="section-label">Distribuição pelo território</p>
+    <h2 class="section-title"><span>Análise Geográfica</span></h2>
+    <div class="geo-grid">
+      <div>
+        <p style="font-size:.8rem;font-weight:500;margin-bottom:1rem;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-soft);">Top 10 Cidades</p>
+        <div class="ranking-list" id="cityRanking"></div>
+      </div>
+      <div>
+        <p style="font-size:.8rem;font-weight:500;margin-bottom:1rem;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-soft);">Shows por Estado</p>
+        <div class="uf-chart-wrap">
+          <canvas id="ufChart" role="img" aria-label="Shows por estado"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SHOWS -->
+<section id="shows">
+  <div class="container">
+    <p class="section-label">Base completa</p>
+    <h2 class="section-title"><span>Todos os Shows</span></h2>
+    <div class="shows-filters" id="filters"></div>
+    <div style="overflow-x:auto;">
+      <table class="shows-table">
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Mês</th>
+            <th>Evento</th>
+            <th>Local</th>
+            <th>Tipo</th>
+            <th>Cachê Bruto</th>
+            <th>Líq. Sam Music</th>
+          </tr>
+        </thead>
+        <tbody id="showsTbody"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <strong>Sam Music · Análise Interna 2025</strong> — Dados extraídos dos borderôs oficiais · 78 shows · R$ 15,4M cachê bruto
+</footer>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────────
+const MESES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+const MESES_FULL = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+
+const monthData = [
+  {mes:'Jan',n:3,cache:630000,sam:348960},
+  {mes:'Fev',n:2,cache:510000,sam:299989},
+  {mes:'Mar',n:5,cache:838500,sam:498068},
+  {mes:'Abr',n:8,cache:1590000,sam:783725},
+  {mes:'Mai',n:7,cache:880000,sam:422490},
+  {mes:'Jun',n:8,cache:1349500,sam:755867},
+  {mes:'Jul',n:7,cache:1536000,sam:598363},
+  {mes:'Ago',n:8,cache:1894423,sam:857930},
+  {mes:'Set',n:8,cache:1816500,sam:796161},
+  {mes:'Out',n:5,cache:890000,sam:385361},
+  {mes:'Nov',n:7,cache:1298500,sam:696484},
+  {mes:'Dez',n:10,cache:2182220,sam:1000255},
+];
+
+const tipoData = [
+  {tipo:'Corporativo',n:33,cache:7214423,sam:3799687,margem:52.7,medio:218619,color:'#1a3a5c'},
+  {tipo:'Prefeitura', n:13,cache:3130000,sam:1308557,margem:41.8,medio:240769,color:'#1a5c3a'},
+  {tipo:'Festival',   n:18,cache:2650000,sam:1272196,margem:48.0,medio:147222,color:'#6e2c0f'},
+  {tipo:'Aniversário',n:4, cache:1248000,sam:652655, margem:52.3,medio:312000,color:'#4a235a'},
+  {tipo:'SESC',       n:4, cache:701000, sam:253404, margem:36.1,medio:175250,color:'#0e4a3a'},
+  {tipo:'Show Próprio',n:5,cache:457220, sam:146871, margem:32.1,medio:91444, color:'#555'},
+  {tipo:'Ação/Locução',n:1,cache:15000,  sam:10280,  margem:68.5,medio:15000, color:'#7d6608'},
+];
+
+const ufData = [
+  {uf:'SP',n:32,cache:6896423,sam:3506020},
+  {uf:'MG',n:20,cache:4142500,sam:1890197},
+  {uf:'RJ',n:8, cache:931000, sam:463504},
+  {uf:'BA',n:4, cache:728500, sam:420176},
+  {uf:'PE',n:2, cache:310000, sam:172049},
+  {uf:'SC',n:2, cache:295000, sam:106901},
+  {uf:'GO',n:2, cache:385000, sam:193739},
+  {uf:'RS',n:2, cache:402220, sam:133771},
+  {uf:'MS',n:2, cache:560000, sam:106253},
+  {uf:'PR',n:1, cache:230000, sam:151947},
+  {uf:'PY',n:1, cache:190000, sam:113394},
+  {uf:'PI',n:1, cache:190000, sam:101969},
+  {uf:'DF',n:1, cache:155000, sam:83732},
+];
+
+const cityData = [
+  {city:'São Paulo/SP',        n:23,cache:4531423,sam:2312510},
+  {city:'Belo Horizonte/MG',   n:5, cache:790000, sam:435219},
+  {city:'Costa do Sauípe/BA',  n:4, cache:728500, sam:420176},
+  {city:'Rio de Janeiro/RJ',   n:3, cache:200000, sam:180461},
+  {city:'Recife/PE',           n:2, cache:310000, sam:172049},
+  {city:'Nova Lima/MG',        n:2, cache:432500, sam:209467},
+  {city:'Porto Alegre/RS',     n:2, cache:402220, sam:133771},
+  {city:'Bonito/MS',           n:2, cache:560000, sam:106253},
+  {city:'Petrópolis/RJ',       n:2, cache:240000, sam:106260},
+  {city:'Campinas/SP',         n:1, cache:580000, sam:264128},
+];
+
+const showsData = [
+  {data:'18/01',mes:'Jan',evento:'Formatura Medicina BH',local:'Belo Horizonte/MG',tipo:'Aniversário',cache:170000,sam:110142},
+  {data:'24/01',mes:'Jan',evento:'Festival Verão Prefeitura Iguape/SP',local:'Iguape/SP',tipo:'Prefeitura',cache:230000,sam:86871},
+  {data:'25/01',mes:'Jan',evento:'Iate Clube Caioba Guaratuba',local:'Guaratuba/PR',tipo:'Corporativo',cache:230000,sam:151947},
+  {data:'08/02',mes:'Fev',evento:'SESC Rio das Ostras',local:'Rio das Ostras/RJ',tipo:'SESC',cache:160000,sam:79232},
+  {data:'15/02',mes:'Fev',evento:'Aniversário Mauricio Campos',local:'São Paulo/SP',tipo:'Corporativo',cache:350000,sam:220757},
+  {data:'14/03',mes:'Mar',evento:'Corp. Clube Atlético Aramaçan',local:'Santo André/SP',tipo:'Corporativo',cache:130000,sam:81974},
+  {data:'15/03',mes:'Mar',evento:'Corp. Itatiba Esporte Clube',local:'Itatiba/SP',tipo:'Corporativo',cache:150000,sam:86352},
+  {data:'22/03',mes:'Mar',evento:'Corp. CIO Brasil (Costa do Sauípe)',local:'Costa do Sauípe/BA',tipo:'Corporativo',cache:178500,sam:96078},
+  {data:'24/03',mes:'Mar',evento:'Corp. Vivo (Iberostar/BA) — Show 1',local:'Costa do Sauípe/BA',tipo:'Corporativo',cache:190000,sam:116832},
+  {data:'24/03',mes:'Mar',evento:'Corp. Vivo (Iberostar/BA) — Show 2',local:'Costa do Sauípe/BA',tipo:'Corporativo',cache:190000,sam:116832},
+  {data:'05/04',mes:'Abr',evento:'Show Samuel Rosa — Cristiano Otoni',local:'Cristiano Otoni/MG',tipo:'Prefeitura',cache:170000,sam:36080},
+  {data:'06/04',mes:'Abr',evento:'Festival Suzano',local:'Suzano/SP',tipo:'Prefeitura',cache:260000,sam:118430},
+  {data:'08/04',mes:'Abr',evento:'Corp. McDonald\'s (Atibaia)',local:'Atibaia/SP',tipo:'Corporativo',cache:190000,sam:121429},
+  {data:'10/04',mes:'Abr',evento:'Corp. Tecnomyl (Assunção/PY)',local:'Assunção/PY',tipo:'Corporativo',cache:190000,sam:113394},
+  {data:'12/04',mes:'Abr',evento:'Festival Clássicos do Brasil — Recife',local:'Recife/PE',tipo:'Festival',cache:160000,sam:97481},
+  {data:'16/04',mes:'Abr',evento:'Corp. Sympla (BH)',local:'Belo Horizonte/MG',tipo:'Corporativo',cache:180000,sam:97353},
+  {data:'24/04',mes:'Abr',evento:'Corp. CCR (São Paulo)',local:'São Paulo/SP',tipo:'Corporativo',cache:290000,sam:119231},
+  {data:'26/04',mes:'Abr',evento:'Festival Música Urbana (SP)',local:'São Paulo/SP',tipo:'Festival',cache:150000,sam:80326},
+  {data:'02/05',mes:'Mai',evento:'Fest. Gastronômico Arcos',local:'Arcos/MG',tipo:'Prefeitura',cache:290000,sam:136754},
+  {data:'03/05',mes:'Mai',evento:'Joy Rock Festival (SP)',local:'São Paulo/SP',tipo:'Show Próprio',cache:150000,sam:78275},
+  {data:'17/05',mes:'Mai',evento:'SESC Chapecó',local:'Chapecó/SC',tipo:'SESC',cache:210000,sam:76620},
+  {data:'19/05',mes:'Mai',evento:'Gravação Vale Tudo (RJ)',local:'Rio de Janeiro/RJ',tipo:'Show Próprio',cache:0,sam:2680},
+  {data:'23/05',mes:'Mai',evento:'Participação Show Djonga (BH)',local:'Belo Horizonte/MG',tipo:'Show Próprio',cache:0,sam:3123},
+  {data:'24/05',mes:'Mai',evento:'Corp. CIO Brasil Gov (Costa do Sauípe)',local:'Costa do Sauípe/BA',tipo:'Corporativo',cache:170000,sam:90434},
+  {data:'31/05',mes:'Mai',evento:'Festival Popload — Samuel & Terno Rei',local:'São Paulo/SP',tipo:'Festival',cache:60000,sam:34603},
+  {data:'06/06',mes:'Jun',evento:'Noites Cariocas (RJ)',local:'Rio de Janeiro/RJ',tipo:'Festival',cache:0,sam:102465},
+  {data:'07/06',mes:'Jun',evento:'Festival Arena Music — Juiz de Fora',local:'Juiz de Fora/MG',tipo:'Festival',cache:150000,sam:79523},
+  {data:'13/06',mes:'Jun',evento:'Prefeitura Ervália',local:'Ervália/MG',tipo:'Prefeitura',cache:320000,sam:119921},
+  {data:'19/06',mes:'Jun',evento:'Festival Piribier — Pirinópolis',local:'Pirinópolis/GO',tipo:'Festival',cache:175000,sam:88773},
+  {data:'21/06',mes:'Jun',evento:'Festival Inverno Pedro II/PI',local:'Pedro II/PI',tipo:'Prefeitura',cache:190000,sam:101969},
+  {data:'26/06',mes:'Jun',evento:'Corp. Jantar Mário Penna — Nova Lima',local:'Nova Lima/MG',tipo:'Corporativo',cache:184500,sam:98073},
+  {data:'28/06',mes:'Jun',evento:'Corp. Leopoldina Juvenil — POA',local:'Porto Alegre/RS',tipo:'Corporativo',cache:180000,sam:101260},
+  {data:'29/06',mes:'Jun',evento:'Festival Turá (SP)',local:'São Paulo/SP',tipo:'Festival',cache:150000,sam:63882},
+  {data:'11/07',mes:'Jul',evento:'Prefeitura Itabirito — JuliFest',local:'Itabirito/MG',tipo:'Prefeitura',cache:280000,sam:121005},
+  {data:'12/07',mes:'Jul',evento:'Prefeitura Nova Era — Fest. Gastronômico',local:'Nova Era/MG',tipo:'Prefeitura',cache:240000,sam:84712},
+  {data:'16/07',mes:'Jul',evento:'Prefeitura Borda da Mata',local:'Borda da Mata/MG',tipo:'Prefeitura',cache:280000,sam:102220},
+  {data:'19/07',mes:'Jul',evento:'SESC Inverno Cabo Frio',local:'Cabo Frio/RJ',tipo:'SESC',cache:165500,sam:51003},
+  {data:'25/07',mes:'Jul',evento:'Expo. Agro Recreio',local:'Recreio/MG',tipo:'Prefeitura',cache:250000,sam:109143},
+  {data:'26/07',mes:'Jul',evento:'SESC Inverno Itaipava',local:'Itaipava/RJ',tipo:'SESC',cache:165500,sam:46548},
+  {data:'27/07',mes:'Jul',evento:'Festival Capital Motoweek — Brasília',local:'Brasília/DF',tipo:'Festival',cache:155000,sam:83732},
+  {data:'02/08',mes:'Ago',evento:'Show Samuel Rosa — Tiradentes',local:'Tiradentes/MG',tipo:'Prefeitura',cache:150000,sam:87842},
+  {data:'09/08',mes:'Ago',evento:'Festival Timbre — Uberlândia',local:'Uberlândia/MG',tipo:'Festival',cache:150000,sam:80936},
+  {data:'15/08',mes:'Ago',evento:'Corp. Paineiras Morumby (SP)',local:'São Paulo/SP',tipo:'Corporativo',cache:240000,sam:100377},
+  {data:'16/08',mes:'Ago',evento:'Festival Dipanas Blues — Pará de Minas',local:'Pará de Minas/MG',tipo:'Festival',cache:170000,sam:83764},
+  {data:'22/08',mes:'Ago',evento:'Fest. Inverno Bonito/MS — 1ª data',local:'Bonito/MS',tipo:'Festival',cache:280000,sam:50744},
+  {data:'26/08',mes:'Ago',evento:'Corp. HDT (São Paulo)',local:'São Paulo/SP',tipo:'Corporativo',cache:294423,sam:125188},
+  {data:'28/08',mes:'Ago',evento:'Corp. Alameda Gabriel (SP)',local:'São Paulo/SP',tipo:'Corporativo',cache:180000,sam:96645},
+  {data:'30/08',mes:'Ago',evento:'Aniv. Cristina Fiorezzi — Porto Feliz',local:'Porto Feliz/SP',tipo:'Aniversário',cache:430000,sam:232435},
+  {data:'07/09',mes:'Set',evento:'Aniv. Minas Tênis Clube — Nova Lima',local:'Nova Lima/MG',tipo:'Aniversário',cache:248000,sam:111394},
+  {data:'13/09',mes:'Set',evento:'Rock Recife Festival',local:'Recife/PE',tipo:'Festival',cache:150000,sam:74568},
+  {data:'20/09',mes:'Set',evento:'Aniv. Paula Depieri (SP)',local:'São Paulo/SP',tipo:'Aniversário',cache:400000,sam:198684},
+  {data:'22/08',mes:'Set',evento:'Fest. Inverno Bonito/MS — 2ª data',local:'Bonito/MS',tipo:'Festival',cache:280000,sam:55509},
+  {data:'23/09',mes:'Set',evento:'Corp. 90 Anos Drogal — Piracicaba',local:'Piracicaba/SP',tipo:'Corporativo',cache:185000,sam:108444},
+  {data:'26/09',mes:'Set',evento:'Corp. Harmonia do Tênis (SP)',local:'São Paulo/SP',tipo:'Corporativo',cache:203500,sam:94812},
+  {data:'27/09',mes:'Set',evento:'Show Samuel Rosa — Lavras/MG',local:'Lavras/MG',tipo:'Prefeitura',cache:150000,sam:77432},
+  {data:'28/09',mes:'Set',evento:'Festival Doce Maravilha (RJ)',local:'Rio de Janeiro/RJ',tipo:'Festival',cache:200000,sam:75316},
+  {data:'04/10',mes:'Out',evento:'Corp. Educandário Bebedouro',local:'Bebedouro/SP',tipo:'Corporativo',cache:210000,sam:93448},
+  {data:'10/10',mes:'Out',evento:'Corp. Congresso IBDA (BH)',local:'Belo Horizonte/MG',tipo:'Corporativo',cache:240000,sam:111397},
+  {data:'17/10',mes:'Out',evento:'Corp. Juventus (SP)',local:'São Paulo/SP',tipo:'Corporativo',cache:130000,sam:18147},
+  {data:'22/10',mes:'Out',evento:'Corp. SEG Summit Santana/SP',local:'São Paulo/SP',tipo:'Corporativo',cache:190000,sam:106895},
+  {data:'31/10',mes:'Out',evento:'Festival Rock the Mountain — Petrópolis',local:'Petrópolis/RJ',tipo:'Festival',cache:120000,sam:55475},
+  {data:'01/11',mes:'Nov',evento:'Aniv. Luciana Repsold (SP)',local:'São Paulo/SP',tipo:'Corporativo',cache:425000,sam:235282},
+  {data:'07/11',mes:'Nov',evento:'Festival Rock the Mountain — Petrópolis',local:'Petrópolis/RJ',tipo:'Festival',cache:120000,sam:50785},
+  {data:'12/11',mes:'Nov',evento:'Corp. Bob\'s (SP)',local:'São Paulo/SP',tipo:'Corporativo',cache:210000,sam:113970},
+  {data:'13/11',mes:'Nov',evento:'Corp. Stonex (SP)',local:'São Paulo/SP',tipo:'Corporativo',cache:203500,sam:102339},
+  {data:'22/11',mes:'Nov',evento:'Corp. Porsche Cup (SP)',local:'São Paulo/SP',tipo:'Corporativo',cache:120000,sam:79112},
+  {data:'28/11',mes:'Nov',evento:'Corp. Círculo Militar (SP)',local:'São Paulo/SP',tipo:'Corporativo',cache:190000,sam:103487},
+  {data:'29/11',mes:'Nov',evento:'Festival Nova Brasil (SP)',local:'São Paulo/SP',tipo:'Festival',cache:30000,sam:11509},
+  {data:'—',mes:'Dez',evento:'Ação Locução Bradesco / Doce Maravilha',local:'São Paulo/SP',tipo:'Ação/Locução',cache:15000,sam:10280},
+  {data:'03/12',mes:'Dez',evento:'Corp. Tom sobre Tom (BH)',local:'Belo Horizonte/MG',tipo:'Corporativo',cache:200000,sam:113203},
+  {data:'05/12',mes:'Dez',evento:'Corp. McKinsey (SP)',local:'São Paulo/SP',tipo:'Corporativo',cache:200000,sam:110352},
+  {data:'07/12',mes:'Dez',evento:'Prefeitura Conceição do Mato Dentro',local:'Conceição do Mato Dentro/MG',tipo:'Prefeitura',cache:320000,sam:126177},
+  {data:'10/12',mes:'Dez',evento:'Corp. Vivo (SP)',local:'São Paulo/SP',tipo:'Corporativo',cache:200000,sam:105552},
+  {data:'12/12',mes:'Dez',evento:'Show Samuel — Auditório Araújo Vianna',local:'Porto Alegre/RS',tipo:'Show Próprio',cache:222220,sam:32512},
+  {data:'13/12',mes:'Dez',evento:'Show Samuel — Stage Music Park',local:'Florianópolis/SC',tipo:'Show Próprio',cache:85000,sam:30281},
+  {data:'19/12',mes:'Dez',evento:'Corp. Crosara Advogados (GO)',local:'Goiânia/GO',tipo:'Corporativo',cache:210000,sam:104966},
+  {data:'31/10',mes:'Dez',evento:'Ação Disney / Saruê Rosa',local:'São Paulo/SP',tipo:'Festival',cache:150000,sam:102804},
+  {data:'31/12',mes:'Dez',evento:'Réveillon Royal Palm — Campinas',local:'Campinas/SP',tipo:'Corporativo',cache:580000,sam:264128},
+];
+
+// ── HELPERS ──────────────────────────────────────────────────────────────
+const fmt = n => 'R$ ' + Math.round(n).toLocaleString('pt-BR');
+const fmtK = n => n >= 1000000 ? 'R$ ' + (n/1000000).toFixed(1).replace('.',',') + 'M' : 'R$ ' + Math.round(n/1000) + 'k';
+const maxCache = Math.max(...monthData.map(m=>m.cache));
+const maxSam   = Math.max(...monthData.map(m=>m.sam));
+
+// ── MES GRID ─────────────────────────────────────────────────────────────
+const mesGrid = document.getElementById('mesGrid');
+monthData.forEach(m => {
+  const el = document.createElement('div');
+  el.className='mes-block';
+  el.innerHTML = `<div class="mb-label">${m.mes}</div><div class="mb-n">${m.n}</div><div class="mb-v">${fmtK(m.cache)}</div>`;
+  mesGrid.appendChild(el);
+});
+
+// ── BARS ─────────────────────────────────────────────────────────────────
+function renderBars(containerId, key, maxVal, className) {
+  const el = document.getElementById(containerId);
+  monthData.forEach(m => {
+    const pct = m[key]/maxVal*100;
+    el.innerHTML += `
+      <div class="bar-section">
+        <div class="bar-label-row">
+          <span class="bar-name">${m.mes}</span>
+          <span class="bar-val">${fmtK(m[key])}</span>
+        </div>
+        <div class="bar-track"><div class="bar-fill ${className}" style="width:${pct}%"></div></div>
+      </div>`;
+  });
+}
+renderBars('barsCachê','cache',maxCache,'cache');
+renderBars('barsSam','sam',maxSam,'sam');
+
+// ── LINE CHART ────────────────────────────────────────────────────────────
+new Chart(document.getElementById('lineChart'), {
+  type: 'line',
+  data: {
+    labels: monthData.map(m=>m.mes),
+    datasets: [
+      {label:'Cachê Bruto',data:monthData.map(m=>m.cache/1000),borderColor:'#1a5c3a',backgroundColor:'rgba(26,92,58,0.06)',borderWidth:2.5,pointRadius:4,pointBackgroundColor:'#1a5c3a',fill:true,tension:0.3,yAxisID:'y'},
+      {label:'Sam Music', data:monthData.map(m=>m.sam/1000),  borderColor:'#b8952a',backgroundColor:'rgba(184,149,42,0.06)',borderWidth:2,pointRadius:3,pointBackgroundColor:'#b8952a',fill:false,tension:0.3,yAxisID:'y'},
+      {label:'Shows',     data:monthData.map(m=>m.n),          borderColor:'#888',borderDash:[4,3],borderWidth:1.5,pointRadius:3,fill:false,tension:0.3,yAxisID:'y2'},
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{labels:{font:{size:11},color:'#555'}}},
+    scales:{
+      x:{grid:{display:false},ticks:{font:{size:11}}},
+      y:{grid:{color:'rgba(0,0,0,0.05)'},ticks:{font:{size:10},callback:v=>'R$'+v+'k'},title:{display:true,text:'R$ (mil)',font:{size:10}}},
+      y2:{position:'right',grid:{display:false},ticks:{font:{size:10},stepSize:2},title:{display:true,text:'Nº Shows',font:{size:10}}}
+    }
+  }
+});
+
+// ── TIPO CARDS ────────────────────────────────────────────────────────────
+const tipoCards = document.getElementById('tipoCards');
+tipoData.forEach(t => {
+  const el = document.createElement('div');
+  el.className = 'tipo-card';
+  el.style.borderTopColor = t.color;
+  el.innerHTML = `
+    <div class="tc-tipo" style="color:${t.color}">${t.tipo}</div>
+    <div class="tc-n">${t.n}</div>
+    <div class="tc-shows">shows no ano</div>
+    <div class="tc-row">
+      <div class="tc-row-item"><div class="tc-row-label">Cachê total</div><div class="tc-row-val">${fmtK(t.cache)}</div></div>
+      <div class="tc-row-item"><div class="tc-row-label">Sam Music</div><div class="tc-row-val">${fmtK(t.sam)}</div></div>
+      <div class="tc-row-item"><div class="tc-row-label">Cachê médio</div><div class="tc-row-val">${fmtK(t.medio)}</div></div>
+    </div>
+    <div class="margem-bar"><div class="margem-fill" style="width:${t.margem}%;background:${t.color}"></div></div>
+    <div style="font-size:.65rem;color:#888;margin-top:.3rem;">Margem ${t.margem}%</div>`;
+  tipoCards.appendChild(el);
+});
+
+// ── TIPO CHART ────────────────────────────────────────────────────────────
+new Chart(document.getElementById('tipoChart'), {
+  type:'bar',
+  data:{
+    labels:tipoData.map(t=>t.tipo),
+    datasets:[
+      {label:'Cachê Bruto',data:tipoData.map(t=>t.cache/1000),backgroundColor:tipoData.map(t=>t.color+'33'),borderColor:tipoData.map(t=>t.color),borderWidth:2,borderRadius:3},
+      {label:'Sam Music',  data:tipoData.map(t=>t.sam/1000),  backgroundColor:tipoData.map(t=>t.color+'88'),borderRadius:3},
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{labels:{font:{size:11},color:'#ccc'}}},
+    scales:{
+      x:{grid:{display:false},ticks:{font:{size:10},color:'#aaa'}},
+      y:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{font:{size:10},color:'#aaa',callback:v=>'R$'+v+'k'}}
+    }
+  }
+});
+
+// ── CITY RANKING ──────────────────────────────────────────────────────────
+const cityRanking = document.getElementById('cityRanking');
+cityData.forEach((c,i) => {
+  cityRanking.innerHTML += `
+    <div class="ranking-item">
+      <div class="rank-n ${i<3?'top':''}">${i+1}</div>
+      <div><div class="rank-name">${c.city}</div><div class="rank-sub">${c.n} show${c.n>1?'s':''}</div></div>
+      <div><div class="rank-val">${fmtK(c.cache)}</div><div class="rank-shows">cachê</div></div>
+    </div>`;
+});
+
+// ── UF CHART ──────────────────────────────────────────────────────────────
+new Chart(document.getElementById('ufChart'), {
+  type:'bar',
+  data:{
+    labels:ufData.map(u=>u.uf),
+    datasets:[
+      {label:'Shows',data:ufData.map(u=>u.n),backgroundColor:'#1a5c3a',borderRadius:3},
+    ]
+  },
+  options:{
+    indexAxis:'y',responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' '+c.parsed.x+' shows'}}},
+    scales:{
+      x:{grid:{color:'rgba(0,0,0,0.05)'},ticks:{font:{size:10},stepSize:5}},
+      y:{grid:{display:false},ticks:{font:{size:11,weight:'500'}}}
+    }
+  }
+});
+
+// ── SHOWS TABLE ───────────────────────────────────────────────────────────
+const tipos = [...new Set(showsData.map(s=>s.tipo))];
+const filtersEl = document.getElementById('filters');
+const tbody = document.getElementById('showsTbody');
+
+// "Todos" button
+const allBtn = document.createElement('button');
+allBtn.className='filter-btn active'; allBtn.textContent='Todos (78)';
+allBtn.onclick=()=>{ document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active')); allBtn.classList.add('active'); renderShows('all'); };
+filtersEl.appendChild(allBtn);
+
+tipos.forEach(t => {
+  const btn = document.createElement('button');
+  btn.className='filter-btn';
+  const count = showsData.filter(s=>s.tipo===t).length;
+  btn.textContent=`${t} (${count})`;
+  btn.onclick=()=>{
+    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    renderShows(t);
+  };
+  filtersEl.appendChild(btn);
+});
+
+function renderShows(filter) {
+  tbody.innerHTML='';
+  showsData
+    .filter(s=>filter==='all'||s.tipo===filter)
+    .forEach(s=>{
+      const badgeClass = 'badge-'+s.tipo.replace(/\//g,'').replace(/ /g,'-');
+      tbody.innerHTML += `<tr>
+        <td>${s.data}</td>
+        <td>${s.mes}</td>
+        <td>${s.evento}</td>
+        <td>${s.local}</td>
+        <td><span class="tipo-badge ${badgeClass}">${s.tipo}</span></td>
+        <td class="td-cache">${s.cache>0?fmt(s.cache):'—'}</td>
+        <td class="td-sam">${fmt(s.sam)}</td>
+      </tr>`;
+    });
+}
+renderShows('all');
+
+// ── NAV ACTIVE ────────────────────────────────────────────────────────────
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('nav ul li a');
+window.addEventListener('scroll',()=>{
+  let current='';
+  sections.forEach(s=>{ if(window.scrollY>=s.offsetTop-80) current=s.id; });
+  navLinks.forEach(a=>{ a.classList.toggle('active', a.getAttribute('href')==='#'+current); });
+});
+</script>
+</body>
+</html>
